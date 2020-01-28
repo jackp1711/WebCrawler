@@ -17,6 +17,8 @@ class Crawler:
     number_of_urls_crawled = ''
     max_urls = 0
 
+    overflow_flag = False
+
     def __init__(self, project_name, base_url, domain_name, max_urls):
         Crawler.project_name = project_name
         Crawler.base_url = base_url
@@ -38,14 +40,16 @@ class Crawler:
 
     @staticmethod
     def crawl_page(crawler_name, current_url):
-        if current_url not in Crawler.set_crawled:
+        if Crawler.overflow_flag:
+            pass
+        elif current_url not in Crawler.set_crawled:
             print(crawler_name + ' crawling ' + current_url)
             print('Queue: ' + str(len(Crawler.set_queue)) + '| Crawled: ' + str(len(Crawler.set_crawled)))
 
             Crawler.add_links_queue(Crawler.gather_links(current_url))
             Crawler.set_queue.remove(current_url)
             Crawler.set_crawled.append(current_url)
-            # Crawler.cap_at_max_urls()
+            Crawler.cap_at_max_urls()
             Crawler.update_files()
 
     @staticmethod
@@ -80,13 +84,16 @@ class Crawler:
         if total_links > Crawler.max_urls:
             Crawler.set_queue = []
             Crawler.set_crawled = []
+            Crawler.overflow_flag = True
 
         elif total_links + len(Crawler.set_crawled) > Crawler.max_urls:
             Crawler.set_queue = []
+            Crawler.overflow_flag = True
 
         elif total_links + len(Crawler.set_crawled) + len(Crawler.set_queue) > Crawler.max_urls:
             acceptable_amount = Crawler.max_urls - total_links - len(Crawler.set_crawled)
             Crawler.reduce_set_size(acceptable_amount)
+            Crawler.overflow_flag = True
 
     @staticmethod
     def reduce_set_size(size_required):

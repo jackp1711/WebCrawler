@@ -39,13 +39,15 @@ class CrawlerManager:
             url = self.thread_queue.get()
             crawler.Crawler.crawl_page(threading.current_thread().name, url)
             self.thread_queue.task_done()
+            if not crawler.Crawler.overflow_flag:
+                break
 
     def crawl(self):
         total_links = gf.get_number_of_urls_in_file(self.QUEUE_FILE) + gf.get_number_of_urls_in_file(self.CRAWLED_FILE)
         if total_links >= self.MAX_URLS:
             pass
-
-        queued_links = gf.file_to_set(self.QUEUE_FILE)
-        if len(queued_links) > 0:
-            print(str(len(queued_links)) + " links remaining in the queue")
-            self.create_jobs()
+        else:
+            queued_links = gf.file_to_set(self.QUEUE_FILE)
+            if len(queued_links) > 0:
+                print(str(len(queued_links)) + " links remaining in the queue")
+                self.create_jobs()

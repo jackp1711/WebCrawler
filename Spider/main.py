@@ -9,7 +9,7 @@ DOMAIN_NAME = domain.get_domain_name(HOMEPAGE)
 PROJECT_NAME = DOMAIN_NAME
 
 MAX_URLS = 100
-NUMBER_OF_THREADS = 5
+NUMBER_OF_THREADS = 1
 print("Beginning crawl. Application will gather the first " + str(MAX_URLS) + " urls found")
 
 manager = crawler_manager.CrawlerManager(PROJECT_NAME, HOMEPAGE, DOMAIN_NAME, MAX_URLS, NUMBER_OF_THREADS)
