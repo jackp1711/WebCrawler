@@ -2,9 +2,7 @@
 
 ### Description
 Given a URL, the application searches the HTML of given page and identifies all the \<a> tags within them.
-The href value of the tags are gathered up until the maximum threshold is reached or all URLs for the domain are found.
-
-By default, all of the URLs found will be printed to the terminal, each URL on a separate line. This can be changed
+The href value of the tags are gathered up until the maximum threshold is reached or all URLs for the domain are found. By default, all of the URLs found will be printed to the terminal, each URL on a separate line. This can be changed
 using the flags.
 
 There are a variety of options to alter the functionality of the application, which can be determined using command line

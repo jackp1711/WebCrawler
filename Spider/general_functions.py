@@ -52,29 +52,26 @@ def get_number_of_urls_in_file(file_name):
     return link_numb
 
 
-def create_output_file(file_1, file_2, new_file_name):
+def create_output_file(o_list, file, new_file_name):
     if new_file_name is "":
         new_file_name = 'output_urls.txt'
 
     output = []
-    with open(file_1, 'r') as file1:
-        for line in file1:
+    with open(file, 'r') as file:
+        for line in file:
             line = line.replace('\n', '')
             output.append(line)
-    with open(file_2, 'r') as file2:
-        for line in file2:
-            line = line.replace('\n', '')
-            output.append(line)
+
+    for url in o_list:
+        output.append(url)
 
     write_file(new_file_name, "")
     list_to_file(output, new_file_name)
 
 
-def print_to_console(file_1, file_2):
-    with open(file_1, 'r') as f1:
-        for line in f1:
-            line = line.replace('\n', '')
-            print(line)
+def print_to_console(o_list, file_2):
+    for url in o_list:
+        print(url)
 
     with open(file_2, 'r') as f2:
         for line in f2:
