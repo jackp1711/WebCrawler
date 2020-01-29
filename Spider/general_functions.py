@@ -59,9 +59,11 @@ def create_output_file(file_1, file_2, new_file_name):
     output = []
     with open(file_1, 'r') as file1:
         for line in file1:
+            line = line.replace('\n', '')
             output.append(line)
     with open(file_2, 'r') as file2:
         for line in file2:
+            line = line.replace('\n', '')
             output.append(line)
 
     write_file(new_file_name, "")
@@ -71,8 +73,10 @@ def create_output_file(file_1, file_2, new_file_name):
 def print_to_console(file_1, file_2):
     with open(file_1, 'r') as f1:
         for line in f1:
+            line = line.replace('\n', '')
             print(line)
 
     with open(file_2, 'r') as f2:
         for line in f2:
+            line = line.replace('\n', '')
             print(line)

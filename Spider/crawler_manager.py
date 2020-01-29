@@ -4,6 +4,7 @@ from Spider import crawler
 from Spider import general_functions as gf
 import sys
 
+
 class CrawlerManager:
 
     def __init__(self, project_name, homepage, domain_name, max_urls, thread_number, v_flag, o_flag, o_file):
