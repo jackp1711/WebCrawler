@@ -2,11 +2,11 @@ import threading
 from queue import Queue
 from Spider import crawler
 from Spider import general_functions as gf
-
+import sys
 
 class CrawlerManager:
 
-    def __init__(self, project_name, homepage, domain_name, max_urls, thread_number):
+    def __init__(self, project_name, homepage, domain_name, max_urls, thread_number, v_flag, o_flag, o_file):
         self.thread_queue = Queue()
         self.PROJECT_NAME = project_name
         self.HOMEPAGE = homepage
@@ -15,6 +15,9 @@ class CrawlerManager:
         self.NUMBER_OF_THREADS = thread_number
         self.QUEUE_FILE = self.PROJECT_NAME + '/queue.txt'
         self.CRAWLED_FILE = self.PROJECT_NAME + '/crawled.txt'
+        self.VERBOSE_FLAG = v_flag
+        self.OUTPUT_FLAG = o_flag
+        self.OUTPUT_FILE = o_file
 
         crawler.Crawler(project_name, homepage, domain_name, max_urls)
 
@@ -44,10 +47,18 @@ class CrawlerManager:
 
     def crawl(self):
         total_links = gf.get_number_of_urls_in_file(self.QUEUE_FILE) + gf.get_number_of_urls_in_file(self.CRAWLED_FILE)
-        if total_links >= self.MAX_URLS:
-            pass
+        if total_links + 1 >= self.MAX_URLS:
+            self.finalise()
+            sys.exit()
         else:
             queued_links = gf.file_to_set(self.QUEUE_FILE)
             if len(queued_links) > 0:
                 print(str(len(queued_links)) + " links remaining in the queue")
                 self.create_jobs()
+
+    def finalise(self):
+        if self.OUTPUT_FLAG:
+            print(self.OUTPUT_FILE)
+            gf.create_output_file(self.QUEUE_FILE, self.CRAWLED_FILE, self.OUTPUT_FILE)
+        else:
+            gf.print_to_console(self.QUEUE_FILE, self.CRAWLED_FILE)

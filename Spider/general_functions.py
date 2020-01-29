@@ -1,4 +1,3 @@
-import requests
 import os
 
 
@@ -51,3 +50,29 @@ def list_to_file(url_list, file_name):
 def get_number_of_urls_in_file(file_name):
     link_numb = len(open(file_name).readlines())
     return link_numb
+
+
+def create_output_file(file_1, file_2, new_file_name):
+    if new_file_name is "":
+        new_file_name = 'output_urls.txt'
+
+    output = []
+    with open(file_1, 'r') as file1:
+        for line in file1:
+            output.append(line)
+    with open(file_2, 'r') as file2:
+        for line in file2:
+            output.append(line)
+
+    write_file(new_file_name, "")
+    list_to_file(output, new_file_name)
+
+
+def print_to_console(file_1, file_2):
+    with open(file_1, 'r') as f1:
+        for line in f1:
+            print(line)
+
+    with open(file_2, 'r') as f2:
+        for line in f2:
+            print(line)

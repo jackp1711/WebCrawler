@@ -2,6 +2,7 @@ from Spider import general_functions as gf
 from Spider import html_parser as parser
 from urllib.request import urlopen
 
+
 class Crawler:
 
     project_name = ''
@@ -41,11 +42,11 @@ class Crawler:
     @staticmethod
     def crawl_page(crawler_name, current_url):
         if Crawler.overflow_flag:
+            print("overflow")
             pass
         elif current_url not in Crawler.set_crawled:
             print(crawler_name + ' crawling ' + current_url)
             print('Queue: ' + str(len(Crawler.set_queue)) + '| Crawled: ' + str(len(Crawler.set_crawled)))
-
             Crawler.add_links_queue(Crawler.gather_links(current_url))
             Crawler.set_queue.remove(current_url)
             Crawler.set_crawled.append(current_url)
@@ -86,7 +87,7 @@ class Crawler:
             Crawler.set_crawled = []
             Crawler.overflow_flag = True
 
-        elif total_links + len(Crawler.set_crawled) > Crawler.max_urls:
+        elif total_links + len(Crawler.set_crawled) >= Crawler.max_urls:
             Crawler.set_queue = []
             Crawler.overflow_flag = True
 
