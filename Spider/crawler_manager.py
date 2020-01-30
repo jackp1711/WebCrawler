@@ -13,14 +13,13 @@ from Spider import general_functions as gf
 
 class CrawlerManager:
 
-    def __init__(self, project_name, homepage, domain_name, domain_flag, max_urls, thread_number, v_flag, o_flag, o_file):
+    def __init__(self, project_name, homepage, domain_name, domain_flag, max_urls, v_flag, o_flag, o_file):
         self.queue = Queue()
         self.PROJECT_NAME = project_name
         self.HOMEPAGE = homepage
         self.DOMAIN_NAME = domain_name
         self.DOMAIN_FLAG = domain_flag
         self.MAX_URLS = max_urls
-        self.NUMBER_OF_THREADS = thread_number
         self.QUEUE_FILE = self.PROJECT_NAME + '/queue.txt'
         self.CRAWLED_FILE = self.PROJECT_NAME + '/crawled.txt'
         self.VERBOSE_FLAG = v_flag

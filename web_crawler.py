@@ -30,7 +30,6 @@ def main():
     DOMAIN_FLAG = args.d
     PROJECT_NAME = DOMAIN_NAME
     MAX_URLS = args.M
-    NUMBER_OF_THREADS = 1
     VERBOSE_FLAG = args.v
     OUTPUT_FLAG = False
     OUTPUT_FILE = ""
@@ -41,7 +40,7 @@ def main():
         OUTPUT_FLAG = True
         OUTPUT_FILE = args.O
 
-    manager = crawler_manager.CrawlerManager(PROJECT_NAME, HOMEPAGE, DOMAIN_NAME, DOMAIN_FLAG, MAX_URLS, NUMBER_OF_THREADS, VERBOSE_FLAG, OUTPUT_FLAG, OUTPUT_FILE)
+    manager = crawler_manager.CrawlerManager(PROJECT_NAME, HOMEPAGE, DOMAIN_NAME, DOMAIN_FLAG, MAX_URLS, VERBOSE_FLAG, OUTPUT_FLAG, OUTPUT_FILE)
     manager.run()
 
 
