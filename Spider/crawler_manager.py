@@ -37,11 +37,6 @@ class CrawlerManager:
     def run(self):
         self.thread_queue.put(self.HOMEPAGE)
         self.work()
-        self.set_up()
-        self.thread_queue.join()
-        for t in self.thread_list:
-            self.thread_queue.put(None)
-            t.join()
         self.finalise()
         gf.remove_files(self.PROJECT_NAME)
 
@@ -52,13 +47,6 @@ class CrawlerManager:
             gf.create_output_file(output, self.CRAWLED_FILE, self.OUTPUT_FILE)
         else:
             gf.print_to_console(output, self.CRAWLED_FILE)
-
-    # Function that sets up the correct number of threads and starts them, with the target function being work().
-    def set_up(self):
-        for _ in range(self.NUMBER_OF_THREADS):
-            t = threading.Thread(target=self.work)
-            t.start()
-            self.thread_list.append(t)
 
     # Main work function that takes URLs from the queue and processes them, retrieving the pages URLs.
     # While loop breaks when either the queue is empty, or the desired number of URLs are found, exiting the function.
@@ -79,6 +67,7 @@ class CrawlerManager:
                 while not self.thread_queue.empty():
                     self.thread_queue.get()
                     self.thread_queue.task_done()
+                break
             else:
                 for link in links:
                     if len(self.visited) < self.MAX_URLS:
@@ -91,9 +80,6 @@ class CrawlerManager:
                 print("Number of sites found so far: ", len(self.visited))
                 print("Sites remaining: ", self.MAX_URLS - len(self.visited))
 
-            if len(self.thread_list) is 0:
-                self.thread_queue.task_done()
-                break
             self.visited = self.filter_links(self.visited)
             self.thread_queue.task_done()
 
@@ -115,10 +101,3 @@ class CrawlerManager:
             if self.DOMAIN_NAME in url:
                 filtered_links.append(url)
         return filtered_links
-
-    # Function to stop all the threaded processes of the class.
-    def tear_down(self):
-        for _ in self.thread_list:
-            self.thread_queue.put(None)
-        for t in self.thread_list:
-            t.join()
