@@ -3,6 +3,7 @@ from queue import Queue
 from Spider import crawler
 from Spider import general_functions as gf
 
+
 class CrawlerManager:
 
     def __init__(self, project_name, homepage, domain_name, domain_flag, max_urls, thread_number, v_flag, o_flag, o_file):
@@ -21,7 +22,6 @@ class CrawlerManager:
 
         self.visited = []
 
-        self.total_crawled = 0
         self.thread_list = []
 
         crawler.Crawler(project_name, homepage, domain_name, max_urls)
@@ -35,12 +35,11 @@ class CrawlerManager:
             self.thread_queue.put(None)
             t.join()
         self.finalise()
+        gf.remove_files(self.PROJECT_NAME)
 
     def finalise(self):
         output = self.visited
-
         if self.OUTPUT_FLAG:
-            print(self.OUTPUT_FILE)
             gf.create_output_file(output, self.CRAWLED_FILE, self.OUTPUT_FILE)
         else:
             gf.print_to_console(output, self.CRAWLED_FILE)
@@ -54,8 +53,6 @@ class CrawlerManager:
     def work(self):
         while True:
             current_url = self.thread_queue.get()
-            print(current_url)
-
             if current_url is None:
                 break
 
@@ -63,10 +60,7 @@ class CrawlerManager:
             if self.DOMAIN_FLAG:
                 links = self.filter_links_by_domain(links)
 
-            print("visited size = ", len(self.visited))
-
             if len(links) + len(self.visited) >= self.MAX_URLS:
-                print(self.thread_queue.empty())
                 self.visited.extend(links[:self.MAX_URLS - len(self.visited)])
                 while not self.thread_queue.empty():
                     self.thread_queue.get()
@@ -77,12 +71,26 @@ class CrawlerManager:
                         self.visited.append(link)
                         self.thread_queue.put(link)
 
+            if self.VERBOSE_FLAG:
+                print("Current URL scanned: ", current_url)
+                print("Number of sites found so far: ", len(self.visited))
+                print("Sites remaining: ", self.MAX_URLS - len(self.visited))
+
             if len(self.thread_list) is 0:
-                print("cunty")
                 self.thread_queue.task_done()
                 break
-
+            self.visited = self.filter_links(self.visited)
             self.thread_queue.task_done()
+
+    @staticmethod
+    def filter_links(links):
+        filtered_links = list()
+        for url in links:
+            if url in filtered_links:
+                continue
+            else:
+                filtered_links.append(url)
+        return filtered_links
 
     def filter_links_by_domain(self, links):
         filtered_links = list()

@@ -1,9 +1,9 @@
 import os
+import shutil
 
 
 def create_project_dir(directory):
     if not os.path.exists(directory):
-        print("Creating directory " + directory)
         os.makedirs(directory)
 
 
@@ -77,3 +77,7 @@ def print_to_console(o_list, file_2):
         for line in f2:
             line = line.replace('\n', '')
             print(line)
+
+
+def remove_files(path):
+    shutil.rmtree(path)
