@@ -1,4 +1,3 @@
-import threading
 from queue import Queue
 from Spider import crawler
 from Spider import general_functions as gf
