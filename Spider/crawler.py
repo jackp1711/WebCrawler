@@ -1,10 +1,17 @@
 from Spider import general_functions as gf
-from Spider import html_parser as parser
+from Spider import url_finder as parser
 from urllib.request import urlopen
+
+"""
+    The Crawler class's main function is to correctly identify valid HTML files to scan for URLs
+    Once the URLs are found in the current page, the data is then organised into a list which can then be passed to
+    other classes
+"""
 
 
 class Crawler:
 
+    # Class variables used to store the current state of the Crawler
     project_name = ''
     base_url = ''
     domain_name = ''
@@ -31,12 +38,16 @@ class Crawler:
 
         self.boot()
 
+    # Static method that aims to set up temporary files to aid in ensuring that pages already crawled are not re-crawled.
     @staticmethod
     def boot():
         gf.create_project_dir(Crawler.project_name)
         gf.create_data_files(Crawler.project_name, Crawler.base_url)
         Crawler.set_crawled = gf.file_to_set(Crawler.crawled_file)
 
+    # Static method that, from a given URL as a parameter, identifies and then downloads the source HTML.
+    # Calls the feed function from the URLFinder class that processes the HTML page to gather the links.
+    # Returns the gathered links.
     @staticmethod
     def gather_links(url):
         html_string_format = ''

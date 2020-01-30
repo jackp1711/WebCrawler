@@ -1,6 +1,11 @@
 import os
 import shutil
 
+"""
+    Set of functions uses for file reading and manipulating.
+    Functions to write the output to a file or to the console are included.
+"""
+
 
 def create_project_dir(directory):
     if not os.path.exists(directory):

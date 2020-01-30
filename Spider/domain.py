@@ -1,5 +1,9 @@
 from urllib.parse import urlparse
 
+"""
+    Set of functions to determine the high level domain name of a given URL.
+"""
+
 
 def get_domain_name(url):
     try:
