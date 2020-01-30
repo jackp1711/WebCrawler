@@ -29,8 +29,8 @@ def write_file(file_name, data):
 
 
 def add_url_to_file(file_name, url):
-    with open(file_name, 'a') as file:
-        file.write(url + '\n')
+    with open(file_name, 'a', encoding='utf-8') as file:
+        file.write(str(url) + '\n')
 
 
 def delete_contents(file_name):
@@ -57,15 +57,11 @@ def get_number_of_urls_in_file(file_name):
     return link_numb
 
 
-def create_output_file(o_list, file, new_file_name):
+def create_output_file(o_list, new_file_name):
     if new_file_name is "":
         new_file_name = 'output_urls.txt'
 
     output = []
-    with open(file, 'r') as file:
-        for line in file:
-            line = line.replace('\n', '')
-            output.append(line)
 
     for url in o_list:
         output.append(url)
@@ -74,14 +70,9 @@ def create_output_file(o_list, file, new_file_name):
     list_to_file(output, new_file_name)
 
 
-def print_to_console(o_list, file_2):
+def print_to_console(o_list):
     for url in o_list:
         print(url)
-
-    with open(file_2, 'r') as f2:
-        for line in f2:
-            line = line.replace('\n', '')
-            print(line)
 
 
 def remove_files(path):

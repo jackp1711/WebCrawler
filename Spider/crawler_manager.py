@@ -10,10 +10,11 @@ from Spider import general_functions as gf
     Controls the options given by the flags from the command line.
 """
 
+
 class CrawlerManager:
 
     def __init__(self, project_name, homepage, domain_name, domain_flag, max_urls, thread_number, v_flag, o_flag, o_file):
-        self.thread_queue = Queue()
+        self.queue = Queue()
         self.PROJECT_NAME = project_name
         self.HOMEPAGE = homepage
         self.DOMAIN_NAME = domain_name
@@ -27,15 +28,14 @@ class CrawlerManager:
         self.OUTPUT_FILE = o_file
 
         self.visited = []
-
-        self.thread_list = []
+        self.crawled = []
 
         crawler.Crawler(project_name, homepage, domain_name, max_urls)
 
     # Run function places the first item in the queue and begins the process of searching through the first URL
     # The first item is the URL passed through by the user when initially calling the program
     def run(self):
-        self.thread_queue.put(self.HOMEPAGE)
+        self.queue.put(self.HOMEPAGE)
         self.work()
         self.finalise()
         gf.remove_files(self.PROJECT_NAME)
@@ -44,17 +44,21 @@ class CrawlerManager:
     def finalise(self):
         output = self.visited
         if self.OUTPUT_FLAG:
-            gf.create_output_file(output, self.CRAWLED_FILE, self.OUTPUT_FILE)
+            gf.create_output_file(output, self.OUTPUT_FILE)
         else:
-            gf.print_to_console(output, self.CRAWLED_FILE)
+            gf.print_to_console(output)
 
     # Main work function that takes URLs from the queue and processes them, retrieving the pages URLs.
     # While loop breaks when either the queue is empty, or the desired number of URLs are found, exiting the function.
     def work(self):
         while True:
-            current_url = self.thread_queue.get()
+            current_url = self.queue.get()
             if current_url is None:
                 break
+
+            if current_url in self.crawled:
+                while current_url in self.crawled:
+                    current_url = self.queue.get()
 
             links = crawler.Crawler.gather_links(current_url)
 
@@ -62,33 +66,39 @@ class CrawlerManager:
             if self.DOMAIN_FLAG:
                 links = self.filter_links_by_domain(links)
 
+            links = self.filter_links(links)
+
             if len(links) + len(self.visited) >= self.MAX_URLS:
                 self.visited.extend(links[:self.MAX_URLS - len(self.visited)])
-                while not self.thread_queue.empty():
-                    self.thread_queue.get()
-                    self.thread_queue.task_done()
+                while not self.queue.empty():
+                    self.queue.get()
+                    self.queue.task_done()
+                self.print_status(current_url)
                 break
             else:
                 for link in links:
                     if len(self.visited) < self.MAX_URLS:
-                        self.visited.append(link)
-                        self.thread_queue.put(link)
+                        if link not in self.visited:
+                            self.visited.append(link)
+                            self.queue.put(link)
+            self.print_status(current_url)
 
-            # If the verbose flag is set, the status of the process after each page crawled will be printed to the console.
-            if self.VERBOSE_FLAG:
-                print("Current URL scanned: ", current_url)
-                print("Number of sites found so far: ", len(self.visited))
-                print("Sites remaining: ", self.MAX_URLS - len(self.visited))
+            self.crawled.append(current_url)
+            self.queue.task_done()
 
-            self.visited = self.filter_links(self.visited)
-            self.thread_queue.task_done()
+    # Function that, If the verbose flag is set, the status of the process after each page crawled will
+    # be printed to the console.
+    def print_status(self, current_url):
+        if self.VERBOSE_FLAG:
+            print("Current URL scanned: ", current_url)
+            print("Number of sites found so far: ", len(self.visited))
+            print("Sites remaining: ", self.MAX_URLS - len(self.visited))
 
-    # Static method to ensure that removes all duplicate links from the input list and returns a list of unique URLs.
-    @staticmethod
-    def filter_links(links):
+    # Method to ensure that removes all duplicate links from the input list and returns a list of unique URLs.
+    def filter_links(self, links):
         filtered_links = list()
         for url in links:
-            if url in filtered_links:
+            if url in filtered_links or url in self.visited:
                 continue
             else:
                 filtered_links.append(url)

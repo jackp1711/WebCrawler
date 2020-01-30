@@ -14,10 +14,10 @@ search. This continues until the required number of URLs are reached.
 ## Getting started
 These instructions wil allow you to set up and run the web crawler, as well as altering the options available
 
-###Prerequisites
+### Prerequisites
 The Python language is required to run this project. There are no other external libraries necessary.
 
-###Installing
+### Installing
 Run the following command within the WebCrawler directory.
 ```
 python web_crawler.py url [flags]
